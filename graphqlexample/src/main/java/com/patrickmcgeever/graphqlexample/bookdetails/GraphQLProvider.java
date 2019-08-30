@@ -30,10 +30,9 @@ public class GraphQLProvider {
         return graphQL;
     }
 
-
     @PostConstruct
     public void init() throws IOException {
-        URL url = Resources.getResource("schema.graphqls");
+        URL url = Resources.getResource("schema.graphql");
         String sdl = Resources.toString(url, Charsets.UTF_8);
         GraphQLSchema graphQLSchema = buildSchema(sdl);
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
@@ -49,9 +48,13 @@ public class GraphQLProvider {
     private RuntimeWiring buildWiring() {
         return RuntimeWiring.newRuntimeWiring()
                 .type(newTypeWiring("Query")
-                        .dataFetcher("bookById", graphQLDataFetchers.getBookByIdDataFetcher()))
+                        .dataFetcher("bookById", graphQLDataFetchers.getBookByIdDataFetcher())
+                        .dataFetcher("authorsByLastName", graphQLDataFetchers.getAuthorsByLastName())
+                        .dataFetcher("authors", graphQLDataFetchers.authors())
+                )
                 .type(newTypeWiring("Book")
-                        .dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher()))
+                        .dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher())
+                )
                 .build();
     }
 

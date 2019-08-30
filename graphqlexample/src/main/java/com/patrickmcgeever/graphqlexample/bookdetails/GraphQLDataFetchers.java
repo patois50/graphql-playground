@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import graphql.schema.DataFetcher;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,10 @@ public class GraphQLDataFetchers {
                     "lastName", "Rice")
     );
 
+    public DataFetcher authors() {
+        return environment -> new ArrayList<>(authors);
+    }
+
     public DataFetcher getBookByIdDataFetcher() {
         return dataFetchingEnvironment -> {
             String bookId = dataFetchingEnvironment.getArgument("id");
@@ -58,6 +63,16 @@ public class GraphQLDataFetchers {
                     .filter(author -> author.get("id").equals(authorId))
                     .findFirst()
                     .orElse(null);
+        };
+    }
+
+    public DataFetcher getAuthorsByLastName() {
+        return dataFetchingEnvironment -> {
+            String lastName = dataFetchingEnvironment.getArgument("lastName");
+            return authors
+                    .stream()
+                    .filter(author -> author.get("lastName").equalsIgnoreCase(lastName))
+                    .toArray();
         };
     }
 }
